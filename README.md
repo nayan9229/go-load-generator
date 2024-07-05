@@ -1,3 +1,3 @@
-This is a simple hello, world demonstration web server.
+export PATH=/Users/nayan/sdk/go1.22.4/bin:$PATH
 
-It serves version information on /version and answers any other request like /name by saying "Hello, name!".
+/Users/nayan/Downloads/templ_Darwin_arm64/templ generate --watch --proxy=http://localhost:3000

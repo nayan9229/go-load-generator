@@ -1,0 +1,121 @@
+package job_details
+import (
+  "github.com/nayan9229/go-load-generator/model"
+  "github.com/nayan9229/go-load-generator/load"
+  "github.com/dustin/go-humanize"
+  "fmt"
+)
+templ JobDetails(job *model.Job) {
+  
+  <!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Report</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-bottom: 20px;
+			}
+			th, td {
+				padding: 12px;
+				text-align: left;
+				border: 1px solid #ddd;
+			}
+			th {
+				background-color: #f4f4f4;
+			}
+			tbody tr:nth-child(even) {
+				background-color: #f9f9f9;
+			}
+			p {
+				margin: 10px 0;
+			}
+		</style>
+	</head>
+	<body>
+    <div class="max-w-4xl mx-auto">
+			<h1 class="text-3xl font-bold mb-6">Job Report: { job.ID.String() }</h1>
+    </div>
+		<table>
+			<thead>
+				<tr>
+					<th>Stat</th>
+					<th>2.5</th>
+					<th>50</th>
+					<th>97.5</th>
+					<th>99</th>
+					<th>Avg</th>
+					<th>Stdev</th>
+					<th>Max</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Latency</td>
+					<td>{ fmt.Sprintf("%v ms", job.Result.Latencies.ValueAtPercentile(2.5)) }</td>
+          <td>{ fmt.Sprintf("%v ms", job.Result.Latencies.ValueAtPercentile(50)) }</td>
+          <td>{ fmt.Sprintf("%v ms", job.Result.Latencies.ValueAtPercentile(97.5)) }</td>
+          <td>{ fmt.Sprintf("%v ms", job.Result.Latencies.ValueAtPercentile(99)) }</td>
+          <td>{ fmt.Sprintf("%.2f ms", job.Result.Latencies.Mean()) }</td>
+          <td>{ fmt.Sprintf("%.2f ms", job.Result.Latencies.StdDev()) }</td>
+          <td>{ fmt.Sprintf("%v ms", job.Result.Latencies.Max()) }</td>
+				</tr>
+			</tbody>
+		</table>
+		<table>
+			<thead>
+				<tr>
+					<th>Stat</th>
+					<th>1</th>
+					<th>2.5</th>
+					<th>50</th>
+					<th>97.5</th>
+					<th>Avg</th>
+					<th>Stdev</th>
+					<th>Min</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Req/Sec</td>
+					<td>{ fmt.Sprintf("%v", job.Result.Requests.ValueAtPercentile(1)) }</td>
+			    <td>{ fmt.Sprintf("%v", job.Result.Requests.ValueAtPercentile(2.5)) }</td>
+			    <td>{ fmt.Sprintf("%v", job.Result.Requests.ValueAtPercentile(50)) }</td>
+			    <td>{ fmt.Sprintf("%v", job.Result.Requests.ValueAtPercentile(97.5)) }</td>
+			    <td>{ fmt.Sprintf("%.2f", job.Result.Requests.Mean()) }</td>
+			    <td>{ fmt.Sprintf("%.2f", job.Result.Requests.StdDev()) }</td>
+			    <td>{ fmt.Sprintf("%v", job.Result.Requests.Min()) }</td>
+				</tr>
+				<tr>
+					<td>Bytes/Sec</td>
+					<td>{ fmt.Sprintf("%v", humanize.Bytes(uint64(job.Result.Throughput.ValueAtPercentile(1)))) }</td>
+			    <td>{ fmt.Sprintf("%v", humanize.Bytes(uint64(job.Result.Throughput.ValueAtPercentile(2.5)))) }</td>
+			    <td>{ fmt.Sprintf("%v", humanize.Bytes(uint64(job.Result.Throughput.ValueAtPercentile(50)))) }</td>
+			    <td>{ fmt.Sprintf("%v", humanize.Bytes(uint64(job.Result.Throughput.ValueAtPercentile(97.5)))) }</td>
+			    <td>{ fmt.Sprintf("%v", humanize.Bytes(uint64(job.Result.Throughput.Mean()))) }</td>
+			    <td>{ fmt.Sprintf("%v", humanize.Bytes(uint64(job.Result.Throughput.StdDev()))) }</td>
+			    <td>{ fmt.Sprintf("%v", humanize.Bytes(uint64(job.Result.Throughput.Min()))) }</td>
+				</tr>
+			</tbody>
+		</table>
+		<p></p>
+			<p>Req/Bytes counts sampled once per second.</p>
+			<p></p>
+			<p>{ fmt.Sprintf("%v 2xx responses, %v non 2xx responses.", job.Result.Resp2xx, job.Result.RespN2xx) }</p>
+			<p>{ fmt.Sprintf("%v total requests in %v seconds, %s read.", load.FormatBigNum(float64(job.Result.TotalResp)), job.Runtime, humanize.Bytes(uint64(job.Result.TotalBytes))) }</p>
+
+			if job.Result.Errors > 0 {
+				<p>{ fmt.Sprintf("%v total errors (%v timeouts).", load.FormatBigNum(float64(job.Result.Errors)), load.FormatBigNum(float64(job.Result.Timeouts))) }</p>
+			}
+			<p>Done!</p>
+      <a href="/" class="text-blue-500">Back to home</a>
+	</body>
+	</html>
+}

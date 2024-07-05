@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/HdrHistogram/hdrhistogram-go"
 	"github.com/dustin/go-humanize"
-	"github.com/glentiki/hdrhistogram"
 	"github.com/jbenet/goprocess"
 	"github.com/valyala/fasthttp"
 )
@@ -116,10 +116,10 @@ func StartLoadTest(uri string, timeout, runtime, parallelRequests int) string {
 			summary += `<p>Req/Bytes counts sampled once per second.</p>`
 			summary += `<p></p>`
 			summary += `<p>` + fmt.Sprintf("%v 2xx responses, %v non 2xx responses.", resp2xx, respN2xx) + `</p>`
-			summary += `<p>` + fmt.Sprintf("%v total requests in %v seconds, %s read.", formatBigNum(float64(totalResp)), runtime, humanize.Bytes(uint64(totalBytes))) + `</p>`
+			summary += `<p>` + fmt.Sprintf("%v total requests in %v seconds, %s read.", FormatBigNum(float64(totalResp)), runtime, humanize.Bytes(uint64(totalBytes))) + `</p>`
 
 			if errors > 0 {
-				summary += `<p>` + fmt.Sprintf("%v total errors (%v timeouts).", formatBigNum(float64(errors)), formatBigNum(float64(timeouts))) + `</p>`
+				summary += `<p>` + fmt.Sprintf("%v total errors (%v timeouts).", FormatBigNum(float64(errors)), FormatBigNum(float64(timeouts))) + `</p>`
 			}
 			summary += `<p>Done!</p>`
 			html = strings.ReplaceAll(html, "[SUMMARY]", summary)
@@ -135,7 +135,7 @@ type resp struct {
 	size    int
 }
 
-func formatBigNum(i float64) string {
+func FormatBigNum(i float64) string {
 	if i < 1000 {
 		return fmt.Sprintf("%.0f", i)
 	}

@@ -1,0 +1,44 @@
+package components
+
+
+import (
+	"github.com/nayan9229/go-load-generator/model"
+  "fmt"
+)
+
+templ Job(job *model.Job) {
+  <li class="border-t border-gray-200"> 
+    <div class="px-4 py-5 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">{ job.ID.String() }</h3>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">{ job.Uri }</p>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Completed at: { job.CreatedAt.Format("2006-01-02 15:04:05") } </p>
+      <div class="mt-4 flex items-center justify-between">
+        if job.Status == model.Completed {
+          <p class="text-sm font-medium text-gray-500">Status: <span class="text-green-600">Completed</span></p>
+          <a
+            href={ templ.URL(fmt.Sprintf("/result/%s", job.ID.String())) }
+            class="font-medium text-indigo-600 hover:text-indigo-500"
+          >View result</a>
+        }
+        if job.Status == model.Running {
+          <p class="text-sm font-medium text-gray-500">Status: <span class="text-green-600">Running</span></p>
+        }
+        if job.Status == model.Pending {
+          <p class="text-sm font-medium text-gray-500">Status: <span class="text-yellow-600">Pending</span></p>
+									<a
+										href="#"
+										class="font-medium text-indigo-600 hover:text-indigo-500"
+									>Edit</a>
+        }
+        if job.Status == model.Failed {
+          <p class="text-sm font-medium text-gray-500">Status: <span class="text-red-600">Failed</span></p>
+									<a
+										href="#"
+										class="font-medium text-indigo-600 hover:text-indigo-500"
+									>Retry</a>
+        }
+      </div>
+    </div>
+  </li>
+
+}

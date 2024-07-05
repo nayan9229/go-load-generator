@@ -13,7 +13,8 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"visiter/load"
+
+	"github.com/nayan9229/go-load-generator/load"
 
 	"math/rand"
 
@@ -31,7 +32,7 @@ var (
 	addr     = flag.String("addr", "localhost:8080", "address to serve")
 )
 
-func main() {
+func mainNot() {
 	// Parse flags.
 	flag.Usage = usage
 	flag.Parse()
